@@ -37,7 +37,8 @@ def print_menu()
   puts "[4] Transferir"
   puts "[5] Listar contas"
   puts "[6] Acesso a conta"
-  puts "[7] Sair"
+  puts "[7] Alterar informações do titular"
+  puts "[8] Sair"
 end
 
 def print_boas_vindas()
@@ -82,7 +83,7 @@ class Conta
     if @banco.tipo == "Corrente" || @banco.saldo >= valor
       sacar(valor)
       conta_destino.depositar(valor)
-      puts "Transferência efetuada com sucesso"
+      puts "\e[32mTransferência efetuada com sucesso\e[0m"  # Verde para sucesso
     else
       puts "\e[31mSaldo insuficiente. Não foi possível transferir.\e[0m"  # Vermelho para saldo insuficiente
     end
@@ -244,10 +245,46 @@ def acessar_conta
   end
 end
 
+# Função para alterar informações do titular
+def alterar_informacoes
+  print "Digite o CPF da conta: "
+  cpf = gets.chomp
+  contas = encontrar_contas(cpf)
+
+  if contas.any?
+    puts "Selecione a conta:"
+    contas.each_with_index do |conta, index|
+      puts "[#{index + 1}] Conta #{index + 1}"
+    end
+    escolha = gets.chomp.to_i - 1
+    conta = contas[escolha]
+
+    print "Digite o novo nome do titular (ou deixe em branco para manter): "
+    novo_nome = gets.chomp
+    print "Digite o novo sobrenome do titular (ou deixe em branco para manter): "
+    novo_sobrenome = gets.chomp
+    print "Digite o novo telefone do titular (ou deixe em branco para manter): "
+    novo_telefone = gets.chomp
+    print "Digite o novo e-mail do titular (ou deixe em branco para manter): "
+    novo_email = gets.chomp
+
+    conta.cliente.nome = novo_nome unless novo_nome.empty?
+    conta.cliente.sobrenome = novo_sobrenome unless novo_sobrenome.empty?
+    conta.cliente.telefone = novo_telefone unless novo_telefone.empty?
+    conta.cliente.email = novo_email unless novo_email.empty?
+
+    puts "\e[32mInformações do titular atualizadas com sucesso!\e[0m"
+  else
+    puts "\e[31mConta não encontrada!\e[0m"
+  end
+end
+
 def print_informacoes_pessoais(cliente)
   puts "\e[31mNome: #{cliente.nome} #{cliente.sobrenome}\e[0m"
   puts "\e[31mCPF: #{cliente.cpf}\e[0m"
   puts "\e[31mRG: #{cliente.rg}\e[0m"
+  puts "\e[31mTELEFONE: #{cliente.telefone}\e[0m"
+  puts "\e[31mEMAIL: #{cliente.email}\e[0m"
 end
 
 # Loop do Menu
@@ -270,6 +307,8 @@ loop do
   when 6
     acessar_conta
   when 7
+    alterar_informacoes
+  when 8
     puts "Saindo do sistema...\n"
     print_colored_messages()
     break

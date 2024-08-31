@@ -2,9 +2,6 @@ def print_logo()
   red_color_code = "\e[31m"
   reset_color_code = "\e[0m"
 
-puts "======================================="
-puts "\n"
-
   logo_top = <<-'LOGO'
 =======================================
   LOGO
@@ -33,7 +30,6 @@ end
 
 print_logo()
 
-
 def print_menu()
   puts "[1] Criar conta"
   puts "[2] Sacar"
@@ -45,7 +41,7 @@ def print_menu()
 end
 
 def print_boas_vindas()
-  puts "Seja bem-vindo(a) ao Ruby Bank"
+  puts "\e[34mSeja bem-vindo(a) ao Ruby Bank\e[0m"  # Azul para boas-vindas
 end
 
 print_boas_vindas()
@@ -60,11 +56,11 @@ class Conta
   end
 
   def sacar(valor)
-    if @banco.saldo >= valor
+    if @banco.tipo == "Corrente" || @banco.saldo >= valor
       @banco.saldo -= valor
       puts "Saque efetuado com sucesso"
     else
-      puts "Saldo insuficiente"
+      puts "\e[31mSaldo insuficiente\e[0m"  # Vermelho para saldo insuficiente
     end
   end
 
@@ -83,22 +79,31 @@ class Conta
   end
 
   def transferir(conta_destino, valor)
-    if @banco.saldo >= valor
+    if @banco.tipo == "Corrente" || @banco.saldo >= valor
       sacar(valor)
       conta_destino.depositar(valor)
       puts "Transferência efetuada com sucesso"
     else
-      puts "Saldo insuficiente. Não foi possível transferir."
+      puts "\e[31mSaldo insuficiente. Não foi possível transferir.\e[0m"  # Vermelho para saldo insuficiente
     end
+  end
+
+  def exibir_informacoes
+    puts "\e[34mBanco: #{@banco.banco}\e[0m"
+    puts "\e[34mAgência: #{@banco.agencia}\e[0m"
+    puts "\e[34mNúmero da conta: #{@banco.conta}\e[0m"
+    puts "\e[34mIBAN: #{@banco.iban}\e[0m"
+    puts "\e[34mTipo: #{@banco.tipo}\e[0m"
+    puts "\e[34mSaldo: #{@banco.saldo}\e[0m"
   end
 end
 
 # Lista global de contas
 $contas = []
 
-# Função para encontrar uma conta pelo CPF
-def encontrar_conta(cpf)
-  $contas.find { |conta| conta.cliente.cpf == cpf }
+# Função para encontrar contas pelo CPF
+def encontrar_contas(cpf)
+  $contas.select { |conta| conta.cliente.cpf == cpf }
 end
 
 # Função para criar uma nova conta
@@ -121,27 +126,28 @@ def criar_conta
   $contas << conta
 
   puts "Conta criada com sucesso!"
-  puts "\nSegue informações:\n"
-  puts "Banco: #{conta.banco.banco}"
-  puts "Agência: #{conta.banco.agencia}"
-  puts "Número da conta: #{conta.banco.conta}"
-  puts "IBAN: #{conta.banco.iban}"
-  puts "Tipo: #{conta.banco.tipo}"
-  puts "Saldo: #{conta.banco.saldo}"    
+  conta.exibir_informacoes
 end
 
 # Função para sacar dinheiro
 def sacar
   print "Digite o CPF da conta: "
   cpf = gets.chomp
-  conta = encontrar_conta(cpf)
+  contas = encontrar_contas(cpf)
 
-  if conta
+  if contas.any?
+    puts "Selecione a conta:"
+    contas.each_with_index do |conta, index|
+      puts "[#{index + 1}] Conta #{index + 1}"
+    end
+    escolha = gets.chomp.to_i - 1
+    conta = contas[escolha]
+
     print "Digite o valor a sacar: "
     valor = gets.chomp.to_f
     conta.sacar(valor)
   else
-    puts "Conta não encontrada!"
+    puts "\e[31mConta não encontrada!\e[0m"
   end
 end
 
@@ -149,14 +155,21 @@ end
 def depositar
   print "Digite o CPF da conta: "
   cpf = gets.chomp
-  conta = encontrar_conta(cpf)
+  contas = encontrar_contas(cpf)
 
-  if conta
+  if contas.any?
+    puts "Selecione a conta:"
+    contas.each_with_index do |conta, index|
+      puts "[#{index + 1}] Conta #{index + 1}"
+    end
+    escolha = gets.chomp.to_i - 1
+    conta = contas[escolha]
+
     print "Digite o valor a depositar: "
     valor = gets.chomp.to_f
     conta.depositar(valor)
   else
-    puts "Conta não encontrada!"
+    puts "\e[31mConta não encontrada!\e[0m"
   end
 end
 
@@ -164,32 +177,46 @@ end
 def transferir
   print "Digite o CPF da conta de origem: "
   cpf_origem = gets.chomp
-  conta_origem = encontrar_conta(cpf_origem)
+  contas_origem = encontrar_contas(cpf_origem)
 
-  if conta_origem
+  if contas_origem.any?
+    puts "Selecione a conta de origem:"
+    contas_origem.each_with_index do |conta, index|
+      puts "[#{index + 1}] Conta #{index + 1}"
+    end
+    escolha_origem = gets.chomp.to_i - 1
+    conta_origem = contas_origem[escolha_origem]
+
     print "Digite o CPF da conta de destino: "
     cpf_destino = gets.chomp
-    conta_destino = encontrar_conta(cpf_destino)
+    contas_destino = encontrar_contas(cpf_destino)
 
-    if conta_destino
+    if contas_destino.any?
+      puts "Selecione a conta de destino:"
+      contas_destino.each_with_index do |conta, index|
+        puts "[#{index + 1}] Conta #{index + 1}"
+      end
+      escolha_destino = gets.chomp.to_i - 1
+      conta_destino = contas_destino[escolha_destino]
+
       print "Digite o valor a transferir: "
       valor = gets.chomp.to_f
       conta_origem.transferir(conta_destino, valor)
     else
-      puts "Conta de destino não encontrada!"
+      puts "\e[31mConta de destino não encontrada!\e[0m"
     end
   else
-    puts "Conta de origem não encontrada!"
+    puts "\e[31mConta de origem não encontrada!\e[0m"
   end
 end
 
 # Função para listar todas as contas
 def listar_contas
   if $contas.empty?
-    puts "Nenhuma conta cadastrada."
+    puts "\e[33mNenhuma conta cadastrada.\e[0m"  # Amarelo para nenhuma conta
   else
     $contas.each do |conta|
-      puts "Titular: #{conta.cliente.nome} #{conta.cliente.sobrenome} | CPF: #{conta.cliente.cpf} | Banco: #{conta.banco.banco} | Agência: #{conta.banco.agencia} | Conta: #{conta.banco.conta} | Saldo: #{conta.banco.saldo}"
+      puts "\e[36mTitular: #{conta.cliente.nome} #{conta.cliente.sobrenome} | CPF: #{conta.cliente.cpf} | Banco: #{conta.banco.banco} | Agência: #{conta.banco.agencia} | Conta: #{conta.banco.conta} | Saldo: #{conta.banco.saldo}\e[0m"
     end
   end
 end
@@ -198,12 +225,22 @@ end
 def acessar_conta
   print "Digite o CPF da conta: "
   cpf = gets.chomp
-  conta = encontrar_conta(cpf)
+  contas = encontrar_contas(cpf)
 
-  if conta
-    conta.consultar_saldo
+  if contas.any?
+    puts "Selecione a conta:"
+    contas.each_with_index do |conta, index|
+      puts "[#{index + 1}] Conta #{index + 1}"
+    end
+    escolha = gets.chomp.to_i - 1
+    conta = contas[escolha]
+
+    puts "\e[34mInformações da Conta\e[0m"
+    conta.exibir_informacoes
+    puts "\e[34mInformações do Titular\e[0m"
+    print_informacoes_pessoais(conta.cliente)
   else
-    puts "Conta não encontrada!"
+    puts "\e[31mConta não encontrada!\e[0m"
   end
 end
 
@@ -237,7 +274,7 @@ loop do
     print_colored_messages()
     break
   else
-    puts "Opção inválida! Tente novamente."
+    puts "\e[31mOpção inválida! Tente novamente.\e[0m"  # Vermelho para opção inválida
   end
 
   puts "\n"  # Adiciona uma linha em branco para melhorar a legibilidade do menu
@@ -247,6 +284,7 @@ def print_colored_messages
   # Códigos de cores ANSI
   red_color_code = "\e[31m"
   green_color_code = "\e[32m"
+  blue_color_code = "\e[34m"
   reset_color_code = "\e[0m"
 
   # Mensagens com cores

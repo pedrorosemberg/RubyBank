@@ -51,16 +51,18 @@ print_boas_vindas()
 
 # Classe Conta (sem herança)
 class Conta
-  attr_reader :cliente, :banco
+  attr_reader :cliente, :banco, :historico
 
   def initialize(cliente)
     @cliente = cliente
     @banco = Bancos.new  # Instancia um objeto Bancos
+    @historico = [] # Inicializa o histórico de transações
   end
 
   def sacar(valor)
     if @banco.saldo >= valor
       @banco.saldo -= valor
+      registrar_transacao('SAQUE', valor, '---')
       puts "Saque efetuado com sucesso"
     else
       puts "\e[31mSaldo insuficiente\e[0m"  # Vermelho para saldo insuficiente
@@ -78,16 +80,35 @@ class Conta
 
   def depositar(valor)
     @banco.saldo += valor
+    registrar_transacao('DEPÓSITO', valor, '---')
     puts "Depósito efetuado com sucesso"
   end
 
   def transferir(conta_destino, valor)
     if @banco.saldo >= valor
-      sacar(valor)
+      @banco.saldo -= valor
       conta_destino.depositar(valor)
+      registrar_transacao('TRANSFERÊNCIA', valor, conta_destino.cliente.cpf)
+      conta_destino.registrar_transacao('TRANSFERÊNCIA RECEBIDA', valor, cliente.cpf)
       puts "\e[32mTransferência efetuada com sucesso\e[0m"  # Verde para sucesso
     else
       puts "\e[31mSaldo insuficiente. Não foi possível transferir.\e[0m"  # Vermelho para saldo insuficiente
+    end
+  end
+
+  def registrar_transacao(tipo, valor, conta_associada)
+    @historico << { tipo: tipo, valor: valor, conta: conta_associada }
+  end
+
+  def exibir_historico
+    if @historico.empty?
+      puts "\e[33mNenhuma transação realizada.\e[0m"
+    else
+      puts "\e[34mHistórico de Transações:\e[0m"
+      @historico.each do |transacao|
+        cor = transacao[:tipo].include?('SAQUE') || transacao[:tipo].include?('TRANSFERÊNCIA') ? "\e[31m" : "\e[32m"
+        puts "#{cor}[#{transacao[:tipo]} - Valor: R$#{transacao[:valor]} - Conta: #{transacao[:conta]}]\e[0m"
+      end
     end
   end
 
@@ -213,18 +234,14 @@ def transferir
   end
 end
 
-# Função para listar todas as contas
+# Função para listar contas
 def listar_contas
-  if $contas.empty?
-    puts "\e[33mNenhuma conta cadastrada.\e[0m"  # Amarelo para nenhuma conta
-  else
-    $contas.each do |conta|
-      puts "\e[36mTitular: #{conta.cliente.nome} #{conta.cliente.sobrenome} | CPF: #{conta.cliente.cpf} | Banco: #{conta.banco.banco} | Agência: #{conta.banco.agencia} | Conta: #{conta.banco.conta} | Saldo: #{conta.banco.saldo}\e[0m"
-    end
+  $contas.each_with_index do |conta, index|
+    puts "[#{index + 1}] Conta do(a) #{conta.cliente.nome} #{conta.cliente.sobrenome} - CPF: #{conta.cliente.cpf}"
   end
 end
 
-# Função para acessar uma conta
+# Função para acessar informações de uma conta
 def acessar_conta
   print "Digite o CPF da conta: "
   cpf = gets.chomp
@@ -238,17 +255,34 @@ def acessar_conta
     escolha = gets.chomp.to_i - 1
     conta = contas[escolha]
 
-    puts "\e[34mInformações da Conta\e[0m"
-    conta.exibir_informacoes
-    puts "\e[34mInformações do Titular\e[0m"
-    print_informacoes_pessoais(conta.cliente)
+    loop do
+      puts "\nEscolha uma opção:"
+      puts "[1] Exibir informações da conta"
+      puts "[2] Consultar saldo"
+      puts "[3] Exibir histórico de transações"
+      puts "[4] Voltar"
+      opcao = gets.chomp.to_i
+
+      case opcao
+      when 1
+        conta.exibir_informacoes
+      when 2
+        conta.consultar_saldo
+      when 3
+        conta.exibir_historico
+      when 4
+        break
+      else
+        puts "\e[31mOpção inválida!\e[0m"
+      end
+    end
   else
     puts "\e[31mConta não encontrada!\e[0m"
   end
 end
 
-# Função para alterar informações do titular
-def alterar_informacoes
+# Função para alterar informações do titular da conta
+def alterar_titular
   print "Digite o CPF da conta: "
   cpf = gets.chomp
   contas = encontrar_contas(cpf)
@@ -261,19 +295,22 @@ def alterar_informacoes
     escolha = gets.chomp.to_i - 1
     conta = contas[escolha]
 
-    print "Digite o novo nome do titular (ou deixe em branco para manter): "
-    novo_nome = gets.chomp
-    print "Digite o novo sobrenome do titular (ou deixe em branco para manter): "
-    novo_sobrenome = gets.chomp
-    print "Digite o novo telefone do titular (ou deixe em branco para manter): "
-    novo_telefone = gets.chomp
-    print "Digite o novo e-mail do titular (ou deixe em branco para manter): "
-    novo_email = gets.chomp
+    print "Digite o novo nome do titular: "
+    nome = gets.chomp
+    print "Digite o novo sobrenome do titular: "
+    sobrenome = gets.chomp
+    print "Digite o novo RG do titular: "
+    rg = gets.chomp
+    print "Digite o novo email do titular: "
+    email = gets.chomp
+    print "Digite o novo telefone do titular: "
+    telefone = gets.chomp
 
-    conta.cliente.nome = novo_nome unless novo_nome.empty?
-    conta.cliente.sobrenome = novo_sobrenome unless novo_sobrenome.empty?
-    conta.cliente.telefone = novo_telefone unless novo_telefone.empty?
-    conta.cliente.email = novo_email unless novo_email.empty?
+    conta.cliente.nome = nome
+    conta.cliente.sobrenome = sobrenome
+    conta.cliente.rg = rg
+    conta.cliente.email = email
+    conta.cliente.telefone = telefone
 
     puts "\e[32mInformações do titular atualizadas com sucesso!\e[0m"
   else
@@ -281,32 +318,9 @@ def alterar_informacoes
   end
 end
 
-def print_informacoes_pessoais(cliente)
-  puts "\e[31mNome: #{cliente.nome} #{cliente.sobrenome}\e[0m"
-  puts "\e[31mCPF: #{cliente.cpf}\e[0m"
-  puts "\e[31mRG: #{cliente.rg}\e[0m"
-  puts "\e[31mTelefone: #{cliente.telefone}\e[0m"
-  puts "\e[31mEmail: #{cliente.email}\e[0m"
-end
-
-def print_colored_messages
-  # Códigos de cores ANSI
-  red_color_code = "\e[31m"
-  green_color_code = "\e[32m"
-  blue_color_code = "\e[34m"
-  reset_color_code = "\e[0m"
-
-  # Mensagens com cores
-  puts "#{red_color_code}Obrigado por usar o Ruby Bank!#{reset_color_code}"
-  puts "#{red_color_code}© 2024 RUBYBANK & Co. All Rights Reserved.#{reset_color_code}"
-
-  puts "#{green_color_code}© 2024 Developed by CODEVER LLC#{reset_color_code}"
-end
-
-# Loop do Menu
+# Loop principal do programa
 loop do
   print_menu
-  print "Escolha uma opção: "
   opcao = gets.chomp.to_i
 
   case opcao
@@ -323,14 +337,11 @@ loop do
   when 6
     acessar_conta
   when 7
-    alterar_informacoes
+    alterar_titular
   when 8
-    puts "Saindo do sistema...\n"
-    print_colored_messages()
+    puts "\e[34mSaindo do Ruby Bank. Até logo!\e[0m"
     break
   else
-    puts "\e[31mOpção inválida! Tente novamente.\e[0m"  # Vermelho para opção inválida
+    puts "\e[31mOpção inválida!\e[0m"
   end
-
-  puts "\n"  # Adiciona uma linha em branco para melhorar a legibilidade do menu
 end

@@ -63,7 +63,7 @@ class Conta
     if @banco.saldo >= valor
       @banco.saldo -= valor
       registrar_transacao('SAQUE', valor, '---')
-      puts "Saque efetuado com sucesso"
+      puts "\e[32mSaque efetuado com sucesso\e[0m"  # Verde para sucesso
     else
       puts "\e[31mSaldo insuficiente\e[0m"  # Vermelho para saldo insuficiente
     end
@@ -81,19 +81,24 @@ class Conta
   def depositar(valor)
     @banco.saldo += valor
     registrar_transacao('DEPÓSITO', valor, '---')
-    puts "Depósito efetuado com sucesso"
+    puts "\e[32mDepósito efetuado com sucesso\e[0m"  # Verde para sucesso
   end
 
   def transferir(conta_destino, valor)
     if @banco.saldo >= valor
       @banco.saldo -= valor
-      conta_destino.depositar(valor)
-      registrar_transacao('TRANSFERÊNCIA', valor, conta_destino.cliente.cpf)
-      conta_destino.registrar_transacao('TRANSFERÊNCIA RECEBIDA', valor, cliente.cpf)
+      registrar_transacao('TRANSFERÊNCIA ENVIADA', valor, conta_destino.cliente.cpf)
+      conta_destino.receber_transferencia(valor, cliente.cpf)  # Registrar apenas a transação de entrada na conta destino
       puts "\e[32mTransferência efetuada com sucesso\e[0m"  # Verde para sucesso
     else
       puts "\e[31mSaldo insuficiente. Não foi possível transferir.\e[0m"  # Vermelho para saldo insuficiente
     end
+  end
+
+  # Método específico para registrar uma transferência recebida
+  def receber_transferencia(valor, cpf_origem)
+    @banco.saldo += valor
+    registrar_transacao('TRANSFERÊNCIA RECEBIDA', valor, cpf_origem) # Registra apenas a transação de entrada
   end
 
   def registrar_transacao(tipo, valor, conta_associada)
@@ -106,19 +111,27 @@ class Conta
     else
       puts "\e[34mHistórico de Transações:\e[0m"
       @historico.each do |transacao|
-        cor = transacao[:tipo].include?('SAQUE') || transacao[:tipo].include?('TRANSFERÊNCIA') ? "\e[31m" : "\e[32m"
+        # Define a cor com base no tipo de transação
+        cor = case transacao[:tipo]
+              when 'SAQUE', 'TRANSFERÊNCIA ENVIADA'
+                "\e[31m" # Vermelho para saques e transferências enviadas
+              when 'DEPÓSITO', 'TRANSFERÊNCIA RECEBIDA'
+                "\e[32m" # Verde para depósitos e transferências recebidas
+              else
+                "\e[34m" # Azul padrão para outras transações
+              end
         puts "#{cor}[#{transacao[:tipo]} - Valor: R$#{transacao[:valor]} - Conta: #{transacao[:conta]}]\e[0m"
       end
     end
   end
 
   def exibir_informacoes
-    puts "\e[34mBanco: #{@banco.banco}\e[0m"
-    puts "\e[34mAgência: #{@banco.agencia}\e[0m"
-    puts "\e[34mNúmero da conta: #{@banco.conta}\e[0m"
-    puts "\e[34mIBAN: #{@banco.iban}\e[0m"
-    puts "\e[34mTipo: #{@banco.tipo}\e[0m"
-    puts "\e[34mSaldo: #{@banco.saldo}\e[0m"
+    puts "\e[33mBanco: #{@banco.banco}\e[0m"       # Amarelo para informações da conta
+    puts "\e[33mAgência: #{@banco.agencia}\e[0m"
+    puts "\e[33mNúmero da conta: #{@banco.conta}\e[0m"
+    puts "\e[33mIBAN: #{@banco.iban}\e[0m"
+    puts "\e[33mTipo: #{@banco.tipo}\e[0m"
+    puts "\e[33mSaldo: #{@banco.saldo}\e[0m"
   end
 end
 
@@ -149,7 +162,7 @@ def criar_conta
   conta = Conta.new(cliente)
   $contas << conta
 
-  puts "Conta criada com sucesso!"
+  puts "\e[32mConta criada com sucesso!\e[0m"  # Verde para sucesso
   conta.exibir_informacoes
 end
 
@@ -312,7 +325,7 @@ def alterar_titular
     conta.cliente.email = email
     conta.cliente.telefone = telefone
 
-    puts "\e[32mInformações do titular atualizadas com sucesso!\e[0m"
+    puts "\e[32mInformações do titular atualizadas com sucesso!\e[0m"  # Verde para sucesso
   else
     puts "\e[31mConta não encontrada!\e[0m"
   end
@@ -339,7 +352,9 @@ loop do
   when 7
     alterar_titular
   when 8
-    puts "\e[34mSaindo do Ruby Bank. Até logo!\e[0m"
+    puts "\e[34mSaindo do Ruby Bank. Até logo!\e[0m"  # Azul para mensagem de saída
+    puts "\e[34m© 2024 RUBYBANK & Co. All Rights Reserved.\e[0m"
+    puts "\e[34m© 2024 Developed by CODEVER LLC.\e[0m"
     break
   else
     puts "\e[31mOpção inválida!\e[0m"

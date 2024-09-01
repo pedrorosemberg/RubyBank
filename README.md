@@ -93,6 +93,9 @@ Sinta-se livre para utilizar e modificar conforme necessário.
 O desenvolvedor responsável é [Pedro Rosemberg](https://www.pedrorosemberg.com "Mercadólogo e Desenvolvedor"), que desenvolveu como projeto de estudo da linguagem [Ruby](https://www.ruby-lang.org/pt/downloads/ "A linguagem 'amiga' do programador.").
 
 #### Use. Edite. Só não abuse!
+
 ![Ruby Bank](https://github.com/pedrorosemberg/RubyBank/blob/main/rubybank.png)
+
 **Gaste o quanto quiser, amanhã, nem seu banco vai lembrar!**
+
 *Ruby Bank*, seu banco nada seguro.

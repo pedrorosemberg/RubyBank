@@ -1,17 +1,20 @@
+require_relative 'cliente'
+require_relative 'bancos'
+
 def print_logo()
   red_color_code = "\e[31m"
   reset_color_code = "\e[0m"
 
-  logo_top = <<-'LOGO'
-=======================================
-  LOGO
+  logo_top = <<~LOGO
+    =======================================
+      LOGO
 
-  logo_red_part = <<-'LOGO'
+  logo_red_part = <<~LOGO
                 /\\
                /  \\
               / /\\ \\
              / /  \\ \\
-            / /____\\ \\
+            / /\\ \\
             \\ \\    / /
              \\ \\  / /
               \\ \\/ /
@@ -20,15 +23,13 @@ def print_logo()
              RUBY BANK
   LOGO
 
-  logo_bottom = <<-'LOGO'
-=======================================
-  LOGO
+  logo_bottom = <<~LOGO
+    =======================================
+      LOGO
 
   puts "#{red_color_code}#{logo_red_part}#{reset_color_code}"
   puts "#{logo_bottom}"
 end
-
-print_logo()
 
 def print_menu()
   puts "[1] Criar conta"
@@ -45,6 +46,7 @@ def print_boas_vindas()
   puts "\e[34mSeja bem-vindo(a) ao Ruby Bank\e[0m"  # Azul para boas-vindas
 end
 
+print_logo()
 print_boas_vindas()
 
 # Classe Conta (sem herança)
@@ -57,7 +59,7 @@ class Conta
   end
 
   def sacar(valor)
-    if @banco.tipo == "Corrente" || @banco.saldo >= valor
+    if @banco.saldo >= valor
       @banco.saldo -= valor
       puts "Saque efetuado com sucesso"
     else
@@ -80,7 +82,7 @@ class Conta
   end
 
   def transferir(conta_destino, valor)
-    if @banco.tipo == "Corrente" || @banco.saldo >= valor
+    if @banco.saldo >= valor
       sacar(valor)
       conta_destino.depositar(valor)
       puts "\e[32mTransferência efetuada com sucesso\e[0m"  # Verde para sucesso
@@ -283,8 +285,22 @@ def print_informacoes_pessoais(cliente)
   puts "\e[31mNome: #{cliente.nome} #{cliente.sobrenome}\e[0m"
   puts "\e[31mCPF: #{cliente.cpf}\e[0m"
   puts "\e[31mRG: #{cliente.rg}\e[0m"
-  puts "\e[31mTELEFONE: #{cliente.telefone}\e[0m"
-  puts "\e[31mEMAIL: #{cliente.email}\e[0m"
+  puts "\e[31mTelefone: #{cliente.telefone}\e[0m"
+  puts "\e[31mEmail: #{cliente.email}\e[0m"
+end
+
+def print_colored_messages
+  # Códigos de cores ANSI
+  red_color_code = "\e[31m"
+  green_color_code = "\e[32m"
+  blue_color_code = "\e[34m"
+  reset_color_code = "\e[0m"
+
+  # Mensagens com cores
+  puts "#{red_color_code}Obrigado por usar o Ruby Bank!#{reset_color_code}"
+  puts "#{red_color_code}© 2024 RUBYBANK & Co. All Rights Reserved.#{reset_color_code}"
+
+  puts "#{green_color_code}© 2024 Developed by CODEVER LLC#{reset_color_code}"
 end
 
 # Loop do Menu
@@ -317,18 +333,4 @@ loop do
   end
 
   puts "\n"  # Adiciona uma linha em branco para melhorar a legibilidade do menu
-end
-
-def print_colored_messages
-  # Códigos de cores ANSI
-  red_color_code = "\e[31m"
-  green_color_code = "\e[32m"
-  blue_color_code = "\e[34m"
-  reset_color_code = "\e[0m"
-
-  # Mensagens com cores
-  puts "#{red_color_code}Obrigado por usar o Ruby Bank!#{reset_color_code}"
-  puts "#{red_color_code}© 2024 RUBYBANK & Co. All Rights Reserved.#{reset_color_code}"
-
-  puts "#{green_color_code}© 2024 Developed by CODEVER LLC#{reset_color_code}"
 end

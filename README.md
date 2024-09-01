@@ -4,7 +4,9 @@
 
 ## O que é o Ruby Bank?
 
-O **Ruby Bank** é uma aplicação simples de terminal desenvolvida em Ruby que simula o funcionamento de um banco digital. Esta aplicação permite criar contas bancárias, realizar transações financeiras como saques, depósitos e transferências, além de visualizar o histórico de transações de cada conta de forma individualizada.
+O **Ruby Bank** é uma aplicação simples de terminal desenvolvida em Ruby que simula o funcionamento de um banco digital. 
+
+Esta aplicação permite criar contas bancárias, realizar transações financeiras como saques, depósitos e transferências, além de visualizar o histórico de transações de cada conta de forma individualizada.
 
 ## Como Utilizar
 
@@ -88,6 +90,7 @@ Sinta-se livre para utilizar e modificar conforme necessário.
 
 ### Sobre o desenvolvedor
 
-O desenvolvedor responsável é [PEDRO ROSEMBERG](https://www.pedrorosemberg.com "Mercadólogo e Desenvolvedor").
+O desenvolvedor responsável é [Pedro Rosemberg](https://www.pedrorosemberg.com "Mercadólogo e Desenvolvedor"), que desenvolveu como projeto de estudo da linguagem [Ruby](https://www.ruby-lang.org/pt/downloads/ "A linguagem 'amiga' do programador.").
 
-![PEDRO ROSEMBERG Logo](https://www.pedrorosemberg.com/dev.png)
+#### Use. Edite. Só não abuse!
+![Ruby Bank](https://github.com/pedrorosemberg/RubyBank/blob/main/rubybank.png)

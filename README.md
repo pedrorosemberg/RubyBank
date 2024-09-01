@@ -84,6 +84,6 @@ Para integrar nossa equipe, entre em contato através do e-mail suporte@codever.
 Este projeto é de código aberto e está disponível sob a **Licença MIT**, [clique aqui](LICENSA "Ver 'Licensa MIT' by Codever") para saber mais.
 Sinta-se livre para utilizar e modificar conforme necessário.
 
-### Sobre os Desenvolvedores
+### Sobre o desenvolvedor
 
-A equipe da [CODEVER](https://www.codever.com.br "Hub Júnior de Tecnologia CODEVER")
+A equipe da [PEDRO ROSEMBERG](https://www.pedrorosemberg.com "Mkt; Dev; Ino.")

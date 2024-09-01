@@ -87,3 +87,5 @@ Sinta-se livre para utilizar e modificar conforme necessário.
 ### Sobre o desenvolvedor
 
 A equipe da [PEDRO ROSEMBERG](https://www.pedrorosemberg.com "Mkt; Dev; Ino.")
+
+![PEDRO ROSEMBERG Logo](https://www.pedrorosemberg.com/dev.png)

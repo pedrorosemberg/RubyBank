@@ -85,7 +85,7 @@ Contribuições para melhorar o Ruby Bank são sempre bem-vindas!
 Para integrar nossa equipe, entre em contato através do e-mail suporte@codever.com.br.
 
 ### Licença
-Este projeto é de código aberto e está disponível sob a **Licença MIT**, [clique aqui](LICENSA "Ver 'Licensa MIT' by Codever") para saber mais.
+Este projeto é de código aberto e está disponível sob a **Licença MIT**, [clique aqui](LICENSE "Ver 'Licensa MIT' by Codever") para saber mais.
 Sinta-se livre para utilizar e modificar conforme necessário.
 
 ### Sobre o desenvolvedor

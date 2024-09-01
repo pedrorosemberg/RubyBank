@@ -94,3 +94,5 @@ O desenvolvedor responsável é [Pedro Rosemberg](https://www.pedrorosemberg.com
 
 #### Use. Edite. Só não abuse!
 ![Ruby Bank](https://github.com/pedrorosemberg/RubyBank/blob/main/rubybank.png)
+**Gaste o quanto quiser, amanhã, nem seu banco vai lembrar!**
+*Ruby Bank*, seu banco nada seguro.

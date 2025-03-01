@@ -80,14 +80,6 @@ Cada conta possui um histórico de transações onde é possível visualizar:
 - **Interface Simples e Intuitiva:** O sistema é fácil de usar e não requer conhecimentos avançados para operar.
 - **Modularidade:** O código está organizado de forma modular, facilitando futuras expansões ou modificações.
 
-### Contribuições
-Contribuições para melhorar o Ruby Bank são sempre bem-vindas! 
-Para integrar nossa equipe, entre em contato através do e-mail suporte@codever.com.br.
-
-### Licença
-Este projeto é de código aberto e está disponível sob a **Licença MIT**, [clique aqui](LICENSE "Ver 'Licensa MIT' by Codever") para saber mais.
-Sinta-se livre para utilizar e modificar conforme necessário.
-
 ### Sobre o desenvolvedor
 
 O desenvolvedor responsável é [Pedro Rosemberg](https://www.pedrorosemberg.com "Mercadólogo e Desenvolvedor"), que desenvolveu como projeto de estudo da linguagem [Ruby](https://www.ruby-lang.org/pt/downloads/ "A linguagem 'amiga' do programador.").
@@ -97,5 +89,3 @@ O desenvolvedor responsável é [Pedro Rosemberg](https://www.pedrorosemberg.com
 ![Ruby Bank](https://github.com/pedrorosemberg/RubyBank/blob/main/rubybank.png)
 
 **Gaste o quanto quiser, amanhã, nem seu banco vai lembrar!**
-
-*Ruby Bank*, seu banco nada seguro.
